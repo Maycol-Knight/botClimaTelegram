@@ -2,16 +2,13 @@ import os
 import requests
 import re
 from bs4 import BeautifulSoup
-from dotenv import load_dotenv
 
-# Carga las variables de entorno desde un archivo .env
-load_dotenv()
-
-# Configura tus credenciales
 TG_TOKEN = os.getenv("TG_TOKEN")
 TG_CHAT_ID = os.getenv("TG_CHAT_ID")
 
-# Función para scrapear el pronóstico de LIMA OESTE / CALLAO
+if not TG_TOKEN or not TG_CHAT_ID:
+    raise ValueError("❌ Faltan las variables de entorno necesarias.")
+
 def obtener_pronostico_lima_oeste():
     URL = "https://www.senamhi.gob.pe/main.php?dp=lima&p=pronostico-meteorologico"
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -49,7 +46,6 @@ def obtener_pronostico_lima_oeste():
             salida.append(f"🌥️ {desc}")
     return "\n".join(salida)
 
-# Función para enviar a Telegram
 def enviar_telegram(mensaje):
     url = f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage"
     data = {
@@ -63,7 +59,6 @@ def enviar_telegram(mensaje):
     else:
         print("❌ Error al enviar:", r.text)
 
-# Ejecutar
 if __name__ == "__main__":
     pronostico = obtener_pronostico_lima_oeste()
     enviar_telegram(pronostico)
