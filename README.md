@@ -67,3 +67,50 @@ python senamhi_telegram.py
 ## Licencia
 
 Este proyecto está bajo la licencia MIT.
+
+## Integración con GitHub Actions
+
+Este proyecto está adaptado para ejecutarse en GitHub Actions. Puedes configurar un flujo de trabajo para ejecutar el script automáticamente.
+
+### Ejemplo de configuración de GitHub Actions
+
+Crea un archivo `.github/workflows/main.yml` con el siguiente contenido:
+
+```yaml
+name: Ejecutar Bot Clima Telegram
+
+on:
+  schedule:
+    - cron: "0 7 * * *" # Ejecuta todos los días a las 7:00 AM UTC
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout del repositorio
+      uses: actions/checkout@v3
+
+    - name: Configurar Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Instalar dependencias
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install -r requirements.txt
+
+    - name: Ejecutar el script
+      env:
+        TG_TOKEN: ${{ secrets.TG_TOKEN }}
+        TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+      run: |
+        source venv/bin/activate
+        python senamhi_telegram.py
+```
+
+### Notas sobre GitHub Actions
+- Asegúrate de configurar los secretos `TG_TOKEN` y `TG_CHAT_ID` en el repositorio de GitHub.
+- El flujo de trabajo está configurado para ejecutarse diariamente a las 7:00 AM UTC.
